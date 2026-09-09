@@ -105,3 +105,19 @@ class Lexer:
             self.agregar_error(linea_actual, columna_actual, caracter)
             i += 1
             self.columna += 1
+
+    def mostrar_tokens(self):
+        """Imprime la tabla de tokens en consola."""
+        print("\n--- TABLA DE TOKENS ---")
+        print(f"{'Tipo':<20} {'Valor':<20} {'Línea':<6} {'Columna':<8}")
+        for t in self.tokens:
+            print(f"{t.tipo:<20} {t.valor:<20} {t.linea:<6} {t.columna:<8}")
+
+    def mostrar_errores(self):
+        """Imprime los errores léxicos."""
+        if not self.errores:
+            print("\n✅ No se encontraron errores léxicos.")
+        else:
+            print("\n--- ERRORES LÉXICOS ---")
+            for linea, columna, caracter in self.errores:
+                print(f"Error: carácter '{caracter}' no reconocido en línea {linea}, columna {columna}")
