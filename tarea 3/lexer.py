@@ -12,7 +12,7 @@ class Lexer:
         self.linea = 1
         self.columna = 1
         self.reservadas = {"if", "else", "while", "int", "return"}
-        self.simbolos = {'(', ')', '{', '}', ':', '.'}
+        self.simbolos = {'(', ')', '{', '}', ':', '.', ',', ';'}  # <--- AQUÍ ESTÁ LA CORRECCIÓN
         self.operadores = {'+', '-', '*', '/', '=', '<', '>', '!'}
         self.cargar_archivo()
 
@@ -39,7 +39,7 @@ class Lexer:
         while i < n:
             caracter = self.texto[i]
 
-            # Saltar espacios y tabuladores (no se generan tokens)
+            # Saltar espacios y tabuladores
             if caracter == ' ' or caracter == '\t':
                 i += 1
                 self.columna += 1
@@ -52,18 +52,16 @@ class Lexer:
                 self.columna = 1
                 continue
 
-            # ---------- INICIO DE UN NUEVO TOKEN ----------
             linea_actual = self.linea
             columna_actual = self.columna
 
-            # 1. Identificador o palabra reservada (letra o _)
+            # 1. Identificador o palabra reservada
             if caracter.isalpha() or caracter == '_':
                 valor = ""
                 while i < n and (self.texto[i].isalnum() or self.texto[i] == '_'):
                     valor += self.texto[i]
                     i += 1
                     self.columna += 1
-                # Clasificar
                 if valor in self.reservadas:
                     tipo = "PALABRA_RESERVADA"
                 else:
@@ -71,7 +69,7 @@ class Lexer:
                 self.agregar_token(tipo, valor, linea_actual, columna_actual)
                 continue
 
-            # 2. Número (dígitos)
+            # 2. Número
             if caracter.isdigit():
                 valor = ""
                 while i < n and self.texto[i].isdigit():
@@ -81,12 +79,11 @@ class Lexer:
                 self.agregar_token("NUMERO", valor, linea_actual, columna_actual)
                 continue
 
-            # 3. Operadores (incluyendo de dos caracteres)
+            # 3. Operadores
             if caracter in self.operadores:
                 valor = caracter
                 i += 1
                 self.columna += 1
-                # Verificar si es un operador doble (==, !=, <=, >=)
                 if i < n and self.texto[i] == '=' and caracter in ('=', '!', '<', '>'):
                     valor += self.texto[i]
                     i += 1
@@ -94,29 +91,27 @@ class Lexer:
                 self.agregar_token("OPERADOR", valor, linea_actual, columna_actual)
                 continue
 
-            # 4. Símbolos de agrupación y puntuación (un solo carácter)
+            # 4. Símbolos (incluyendo coma y punto y coma)
             if caracter in self.simbolos:
                 self.agregar_token("SIMBOLO", caracter, linea_actual, columna_actual)
                 i += 1
                 self.columna += 1
                 continue
 
-            # 5. Si llegamos aquí, es un carácter no reconocido -> error léxico
+            # 5. Error léxico
             self.agregar_error(linea_actual, columna_actual, caracter)
             i += 1
             self.columna += 1
 
     def mostrar_tokens(self):
-        """Imprime la tabla de tokens en consola."""
         print("\n--- TABLA DE TOKENS ---")
         print(f"{'Tipo':<20} {'Valor':<20} {'Línea':<6} {'Columna':<8}")
         for t in self.tokens:
             print(f"{t.tipo:<20} {t.valor:<20} {t.linea:<6} {t.columna:<8}")
 
     def mostrar_errores(self):
-        """Imprime los errores léxicos."""
         if not self.errores:
-            print("\n✅ No se encontraron errores léxicos.")
+            print("\nNo se encontraron errores léxicos.")
         else:
             print("\n--- ERRORES LÉXICOS ---")
             for linea, columna, caracter in self.errores:

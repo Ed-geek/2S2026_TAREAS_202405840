@@ -1,0 +1,8 @@
+int x = 5;
+y = x + 3;
+if (y > 10) {
+    print("Hola");   
+    return y;
+}
+$error = 7;          // $ no es válido
+int z = @;           // @ no es válido

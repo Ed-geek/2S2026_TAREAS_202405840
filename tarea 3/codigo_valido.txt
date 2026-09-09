@@ -1,0 +1,11 @@
+int suma(int a, int b) {
+    int resultado = a + b;
+    if (resultado > 10) {
+        return resultado;
+    } else {
+        return 0;
+    }
+}
+while (x < 100) {
+    x = x + 1;
+}
